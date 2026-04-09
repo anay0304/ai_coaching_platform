@@ -67,5 +67,8 @@ export async function POST(
     await extractAndPersistGoals(authSession.user.id, sessionId);
   }
 
-  return Response.json(completed);
+  return Response.json({
+    session: completed,
+    summary: { nextActionSteps, strugglesDiscussed, backupPlans },
+  });
 }
