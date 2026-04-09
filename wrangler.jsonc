@@ -3,15 +3,26 @@
   "main": ".open-next/worker.js",
   "name": "ai-coaching-platform",
   "compatibility_date": "2025-04-01",
+  // nodejs_compat exposes Node.js built-ins (net, tls, crypto, …) inside the
+  // Worker — required by the `pg` database driver and `bcryptjs`.
+  // global_fetch_strictly_public prevents fetch from accessing private IPs.
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // Self-reference service binding used by opennextjs-cloudflare for caching.
+  // The service name must match the `name` field above.
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "ai-coaching-platform"
     }
-  ]
+  ],
+  // Non-secret build-time vars can go here.
+  // Secrets (DATABASE_URL, NEXTAUTH_SECRET, OPENAI_API_KEY) must be added
+  // via `wrangler secret put <NAME>` so they are never stored in this file.
+  "vars": {
+    "NODE_ENV": "production"
+  }
 }

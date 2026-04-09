@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    include: ["src/**/*.test.{ts,tsx}"],
     setupFiles: ["./src/test/setup.ts"],
     env: {
       DATABASE_URL: "postgresql://test:test@localhost:5432/test",

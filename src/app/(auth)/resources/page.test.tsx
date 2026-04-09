@@ -4,20 +4,17 @@ import fc from "fast-check";
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-// Prisma is a DB client — it has no test DB to connect to. We replace the
-// resource.findMany call so the page receives arbitrary test data.
-vi.mock("@/lib/prisma", () => ({
-  prisma: {
-    resource: {
-      findMany: vi.fn(),
-    },
-  },
+// The page now calls getResources() from the resource service rather than
+// importing Prisma directly. We mock at the service boundary so the test
+// receives arbitrary data without a real database connection.
+vi.mock("@/services/resource.service", () => ({
+  getResources: vi.fn(),
 }));
 
-import { prisma } from "@/lib/prisma";
+import { getResources } from "@/services/resource.service";
 import ResourcesPage from "./page";
 
-const mockFindMany = prisma.resource.findMany as unknown as ReturnType<typeof vi.fn>;
+const mockFindMany = getResources as unknown as ReturnType<typeof vi.fn>;
 
 // ─── Arbitraries ──────────────────────────────────────────────────────────────
 

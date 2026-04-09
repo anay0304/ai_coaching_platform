@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { getResources } from "@/services/resource.service";
 import ResourceCard from "@/components/resources/ResourceCard";
 
 // ─── ResourcesPage ────────────────────────────────────────────────────────────
@@ -8,9 +8,7 @@ import ResourceCard from "@/components/resources/ResourceCard";
 // check is needed here.
 
 export default async function ResourcesPage() {
-  const resources = await prisma.resource.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const resources = await getResources();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
