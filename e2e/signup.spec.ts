@@ -19,8 +19,8 @@ test.describe("Sign-up flow (22.5)", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/NutriCoach/i);
 
-    // The login form is visible by default
-    await expect(page.getByRole("button", { name: /log in/i })).toBeVisible();
+    // The login form is visible by default (email input is shown)
+    await expect(page.getByLabel(/email/i)).toBeVisible();
 
     // ── 2. Switch to the Sign Up tab ─────────────────────────────────────────
     await page.getByRole("button", { name: /sign up/i }).click();

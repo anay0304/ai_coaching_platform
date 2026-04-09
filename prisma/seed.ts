@@ -15,7 +15,7 @@ async function main() {
 
   const demoUser = await prisma.user.upsert({
     where: { email: "demo@nutricoach.app" },
-    update: {},
+    update: { password: hashedPassword, isDemo: true },
     create: {
       email: "demo@nutricoach.app",
       name: "Demo User",
