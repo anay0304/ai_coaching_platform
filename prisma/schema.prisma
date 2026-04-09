@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum SessionType {
+  INITIAL  // First session — onboarding and goal-setting
+  CHECKIN  // Short follow-up to track progress
+  ONGOING  // Regular full coaching session
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?  // nullable to support future OAuth providers
+  name      String?
+  isDemo    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile  UserProfile?
+  sessions CoachingSession[]
+}
+
+model UserProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Demographics
+  age      Int?
+  weightKg Float?
+  heightCm Float?
+
+  // Coaching context
+  goals               String[]
+  dietaryRestrictions String[]
+  healthConditions    String[]
+  activityLevel       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CoachingSession {
+  id     String        @id @default(cuid())
+  userId String
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type   SessionType
+  status SessionStatus @default(IN_PROGRESS)
+  title  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+  summary  SessionSummary?
+}
+
+model Message {
+  id        String          @id @default(cuid())
+  sessionId String
+  session   CoachingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  role      MessageRole
+  content   String
+
+  createdAt DateTime @default(now())
+}
+
+model SessionSummary {
+  id        String          @id @default(cuid())
+  sessionId String          @unique
+  session   CoachingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  content     String
+  keyInsights String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Resource {
+  id       String   @id @default(cuid())
+  title    String
+  content  String
+  category String
+  tags     String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

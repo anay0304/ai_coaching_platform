@@ -7,12 +7,12 @@ const mockExit = vi
 
 const mockError = vi.spyOn(console, "error").mockImplementation(() => {});
 
-const VALID_ENV = {
+const VALID_ENV: Record<string, string> = {
   DATABASE_URL: "postgresql://user:pass@localhost:5432/db",
   NEXTAUTH_SECRET: "a-very-long-secret-value",
   NEXTAUTH_URL: "http://localhost:3000",
   OPENAI_API_KEY: "sk-test-key",
-} satisfies NodeJS.ProcessEnv;
+};
 
 describe("validateEnv", () => {
   beforeEach(() => {
@@ -34,8 +34,8 @@ describe("validateEnv", () => {
   ] as const)(
     "calls process.exit(1) and logs the var name when %s is missing",
     (missingVar) => {
-      const env = { ...VALID_ENV, [missingVar]: undefined };
-      validateEnv(env as NodeJS.ProcessEnv);
+      const env: Record<string, string | undefined> = { ...VALID_ENV, [missingVar]: undefined };
+      validateEnv(env);
 
       expect(mockExit).toHaveBeenCalledWith(1);
       expect(mockError).toHaveBeenCalledWith(
@@ -45,7 +45,7 @@ describe("validateEnv", () => {
   );
 
   it("lists all missing vars in a single error message", () => {
-    validateEnv({} as NodeJS.ProcessEnv);
+    validateEnv({});
 
     expect(mockExit).toHaveBeenCalledWith(1);
     const errorMessage: string = mockError.mock.calls[0][0];

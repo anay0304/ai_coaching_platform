@@ -9,7 +9,7 @@ type RequiredVar = (typeof REQUIRED_VARS)[number];
 
 export type Env = Record<RequiredVar, string>;
 
-export function validateEnv(env: NodeJS.ProcessEnv = process.env): Env {
+export function validateEnv(env: Record<string, string | undefined> = process.env): Env {
   const missing = REQUIRED_VARS.filter((key) => !env[key]);
 
   if (missing.length > 0) {

@@ -2,6 +2,9 @@
   "name": "ai-coaching-platform",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,6 +19,7 @@
     "@opennextjs/cloudflare": "^1.18.1",
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "bcryptjs": "^3.0.3",
     "next": "16.2.3",
     "next-auth": "^4.24.13",
     "openai": "^6.34.0",
@@ -28,6 +32,7 @@
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -37,6 +42,7 @@
     "jsdom": "^28.1.0",
     "playwright": "^1.59.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.3"
   }
