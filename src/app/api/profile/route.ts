@@ -1,5 +1,4 @@
-import { prisma } from "@/lib/prisma";
-import { getServerSession } from "@/services/auth.service";
+import { getServerSession, isDemoUser } from "@/services/auth.service";
 import { getProfile, upsertProfile } from "@/services/profile.service";
 import type { ProfileInput } from "@/services/profile.service";
 
@@ -39,24 +38,15 @@ export async function PATCH(request: Request): Promise<Response> {
   // Check if the payload includes credential fields (email / password).
   const hasCredentialField = CREDENTIAL_FIELDS.some((f) => f in body);
 
-  if (hasCredentialField) {
-    // Load the user to check demo status. We do this only when a credential
-    // field is present to avoid the extra DB round-trip on every PATCH.
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { isDemo: true },
-    });
-
-    if (user?.isDemo) {
-      return Response.json(
-        {
-          error:
-            "Demo accounts cannot modify credentials. " +
-            "Create a full account to save your own details.",
-        },
-        { status: 403 }
-      );
-    }
+  if (hasCredentialField && (await isDemoUser(session))) {
+    return Response.json(
+      {
+        error:
+          "Demo accounts cannot modify credentials. " +
+          "Create a full account to save your own details.",
+      },
+      { status: 403 }
+    );
   }
 
   // Build the profile update — only accept the fields that belong to

@@ -9,13 +9,15 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // ── Demo user ──────────────────────────────────────────────────────────────
-  const hashedPassword = await bcrypt.hash("demo-password-123", 12);
+  // Credentials must match the DEMO_EMAIL / DEMO_PASSWORD constants displayed
+  // on the public landing page (src/app/(public)/page.tsx).
+  const hashedPassword = await bcrypt.hash("demo1234", 12);
 
   const demoUser = await prisma.user.upsert({
-    where: { email: "demo@example.com" },
+    where: { email: "demo@nutricoach.app" },
     update: {},
     create: {
-      email: "demo@example.com",
+      email: "demo@nutricoach.app",
       name: "Demo User",
       password: hashedPassword,
       isDemo: true,

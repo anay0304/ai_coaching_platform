@@ -5,13 +5,11 @@ import fc from "fast-check";
 
 vi.mock("@/services/auth.service", () => ({
   getServerSession: vi.fn(),
+  isDemoUser: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    user: {
-      findUnique: vi.fn(),
-    },
     userProfile: {
       findUnique: vi.fn(),
       upsert: vi.fn(),
@@ -24,13 +22,12 @@ vi.mock("@/services/profile.service", () => ({
   upsertProfile: vi.fn(),
 }));
 
-import { getServerSession } from "@/services/auth.service";
-import { prisma } from "@/lib/prisma";
+import { getServerSession, isDemoUser } from "@/services/auth.service";
 import { getProfile, upsertProfile } from "@/services/profile.service";
 import { GET, PATCH } from "./route";
 
 const mockSession = vi.mocked(getServerSession);
-const mockFindUser = prisma.user.findUnique as unknown as ReturnType<typeof vi.fn>;
+const mockIsDemoUser = vi.mocked(isDemoUser);
 const mockGetProfile = vi.mocked(getProfile);
 const mockUpsertProfile = vi.mocked(upsertProfile);
 
@@ -162,7 +159,7 @@ describe("Property 12: Demo user credential immutability", () => {
           };
 
           mockSession.mockResolvedValue(DEMO_SESSION as never);
-          mockFindUser.mockResolvedValue({ isDemo: true });
+          mockIsDemoUser.mockResolvedValue(true);
 
           const res = await PATCH(makeRequest(payload));
 
@@ -186,10 +183,9 @@ describe("Property 12: Demo user credential immutability", () => {
     mockSession.mockResolvedValue(DEMO_SESSION as never);
     mockUpsertProfile.mockResolvedValue(updated as never);
 
-    // No credential fields — no isDemo check needed
+    // No credential fields — isDemoUser is never called
     const res = await PATCH(makeRequest({ goals: ["feel better"] }));
     expect(res.status).toBe(200);
-    // isDemo lookup was not triggered (no credential field in body)
-    expect(mockFindUser).not.toHaveBeenCalled();
+    expect(mockIsDemoUser).not.toHaveBeenCalled();
   });
 });

@@ -92,6 +92,26 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// ─── isDemoUser ───────────────────────────────────────────────────────────────
+
+/**
+ * Returns true when the signed-in user has isDemo: true in the database.
+ * Use this to block credential-update requests for shared demo accounts.
+ *
+ * Accepts the narrow shape we actually need rather than importing the full
+ * next-auth Session type, so it works with any session-like object.
+ */
+export async function isDemoUser(
+  session: { user: { id: string } } | null
+): Promise<boolean> {
+  if (!session) return false;
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { isDemo: true },
+  });
+  return user?.isDemo ?? false;
+}
+
 // ─── Server-side session helper ───────────────────────────────────────────────
 
 /**
