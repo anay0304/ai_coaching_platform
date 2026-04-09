@@ -20,7 +20,7 @@ test.describe("Full session lifecycle (22.6)", () => {
     await page.goto("/");
     await page.getByLabel(/email/i).fill(DEMO_EMAIL);
     await page.getByLabel(/password/i).fill(DEMO_PASSWORD);
-    await page.getByRole("button", { name: /log in/i }).click();
+    await page.locator('button[type="submit"]').click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
   });
 

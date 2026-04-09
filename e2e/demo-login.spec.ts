@@ -36,7 +36,7 @@ test.describe("Demo login flow (22.7)", () => {
     // Fill the login form with the demo credentials shown on the page
     await page.getByLabel(/email/i).fill(DEMO_EMAIL);
     await page.getByLabel(/password/i).fill(DEMO_PASSWORD);
-    await page.getByRole("button", { name: /^log in$/i }).click();
+    await page.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
   });
@@ -54,7 +54,7 @@ test.describe("Demo login flow (22.7)", () => {
     await page.goto("/");
     await page.getByLabel(/email/i).fill(DEMO_EMAIL);
     await page.getByLabel(/password/i).fill("wrong-password");
-    await page.getByRole("button", { name: /^log in$/i }).click();
+    await page.locator('button[type="submit"]').click();
 
     await expect(page.getByRole("alert")).toBeVisible({ timeout: 10_000 });
     await expect(page).not.toHaveURL(/\/dashboard/);
