@@ -107,6 +107,7 @@ Try the app instantly using the demo account:
 
 Email: demo@nutricoach.app
 Password: demo1234
+
 🛠️ Tech Stack
 Frontend: Next.js 16, React 19, Tailwind CSS 4
 Backend: TypeScript, API Routes, Service Layer
